@@ -51,8 +51,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(playfair.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
-      suppressHydrationWarning
+      className={cn(
+        playfair.variable,
+        jetbrainsMono.variable,
+        geist.variable,
+        "font-sans dark" // default dark ON (can be changed by toggle)
+      )}
     >
       <body className="font-sans antialiased min-h-screen bg-background text-foreground">
         {children}

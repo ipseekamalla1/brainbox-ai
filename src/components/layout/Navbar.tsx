@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -57,6 +58,8 @@ export default function Navbar() {
 
         {/* Auth Buttons */}
         <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
+
           <Link
             href="/login"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors px-4 py-2"
@@ -111,6 +114,7 @@ export default function Navbar() {
               </Link>
             ))}
             <div className="pt-3 border-t border-border flex gap-3">
+                <ThemeToggle />
               <Link
                 href="/login"
                 className="text-sm text-muted-foreground py-2"
