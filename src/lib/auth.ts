@@ -4,11 +4,44 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "./prisma";
+import { JWT } from "next-auth/jwt";
+import { Session } from "next-auth";
+
+// ─── Type Extensions ───────────────────────────────
+
+type UserRole = "STUDENT" | "TEACHER" | "ADMIN";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      role: UserRole;
+      avatarUrl?: string | null;
+    };
+  }
+
+  interface User {
+    role: UserRole;
+    avatarUrl?: string | null;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role: UserRole;
+    avatarUrl?: string | null;
+  }
+}
+
+// ─── Auth Options ──────────────────────────────────
 
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
 
   pages: {
@@ -59,21 +92,19 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
-      // On initial sign-in, attach user data to token
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role;
-        token.avatarUrl = (user as any).avatarUrl;
+        token.role = user.role;
+        token.avatarUrl = user.avatarUrl ?? null;
       }
       return token;
     },
 
     async session({ session, token }) {
-      // Attach token data to session for client-side access
       if (session.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
-        (session.user as any).avatarUrl = token.avatarUrl;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.avatarUrl = token.avatarUrl;
       }
       return session;
     },
@@ -81,30 +112,3 @@ export const authOptions: NextAuthOptions = {
 
   secret: process.env.NEXTAUTH_SECRET,
 };
-
-// ─── Type Augmentation for NextAuth ─────────────────
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      role: "STUDENT" | "TEACHER" | "ADMIN";
-      avatarUrl?: string | null;
-    };
-  }
-
-  interface User {
-    role: "STUDENT" | "TEACHER" | "ADMIN";
-    avatarUrl?: string | null;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    role: "STUDENT" | "TEACHER" | "ADMIN";
-    avatarUrl?: string | null;
-  }
-}
