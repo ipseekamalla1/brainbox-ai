@@ -7,6 +7,7 @@ import Link from "next/link";
 import StatCard from "@/components/ui/StatCard";
 
 const quickActions = [
+  
   { label: "Upload Notes", href: "/teacher/notes", icon: "📚", color: "bg-blue-500/10 text-blue-500" },
   { label: "Create Quiz", href: "/teacher/quizzes", icon: "📝", color: "bg-amber-500/10 text-amber-500" },
   { label: "Create Exam", href: "/teacher/exams", icon: "🎓", color: "bg-red-500/10 text-red-500" },
@@ -16,6 +17,7 @@ const quickActions = [
 export default function TeacherDashboard() {
   const { data: session } = useSession();
   const firstName = session?.user?.name?.split(" ")[0] || "Teacher";
+  
 
   return (
     <div>

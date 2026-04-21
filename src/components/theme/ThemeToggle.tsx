@@ -1,27 +1,31 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-  // initialize theme once on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    const isDark = saved !== "light";
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
-    document.documentElement.classList.toggle("dark", isDark);
+  useEffect(() => {
+    setMounted(true);
+
+    const saved = localStorage.getItem("theme");
+    const dark = saved !== "light";
+
+    document.documentElement.classList.toggle("dark", dark);
+    setIsDark(dark);
   }, []);
 
   const toggleTheme = () => {
-    const root = document.documentElement;
-    const isDark = root.classList.contains("dark");
+    const newDark = !isDark;
 
-    root.classList.toggle("dark", !isDark);
-    localStorage.setItem("theme", isDark ? "light" : "dark");
+    document.documentElement.classList.toggle("dark", newDark);
+    localStorage.setItem("theme", newDark ? "dark" : "light");
+    setIsDark(newDark);
   };
 
-  const isDark =
-    typeof window !== "undefined" &&
-    document.documentElement.classList.contains("dark");
+  // 👇 prevents hydration mismatch
+  if (!mounted) return null;
 
   return (
     <button
