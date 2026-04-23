@@ -46,6 +46,8 @@ model User {
   chatSessions  ChatSession[]
   enrollments   Enrollment[]
 
+  activities Activity[]
+
   @@index([email])
   @@index([role])
 }
@@ -333,4 +335,19 @@ model ContactMessage {
   message   String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String?
+  score     Float?
+  duration  Int?
+  entityId  String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
 }

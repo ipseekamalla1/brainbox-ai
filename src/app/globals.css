@@ -160,3 +160,101 @@ body {
 @media (max-width: 640px) {
   input, textarea, select { font-size: 16px !important; }
 }
+
+/* ─── ADD TO BOTTOM OF src/app/globals.css ────────── */
+
+/* ─── Mobile Responsive Overrides ────────────────── */
+
+@layer utilities {
+  /* Safe area for notched phones */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Touch-friendly tap targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Hide scrollbar on mobile */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Prevent text selection on interactive elements */
+  .no-select {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Mobile bottom nav spacing */
+@media (max-width: 768px) {
+  main {
+    padding-bottom: 80px !important;
+  }
+}
+
+/* Larger touch targets on mobile */
+@media (max-width: 640px) {
+  button,
+  a,
+  select,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+  }
+
+  /* Stack grid cards on small screens */
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Full-width inputs */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .lg\:grid-cols-5 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* ─── Print Styles ───────────────────────────────── */
+
+@media print {
+  nav,
+  aside,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}

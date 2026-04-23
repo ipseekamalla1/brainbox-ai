@@ -1,4 +1,5 @@
-// src/components/layout/DashboardSidebar.tsx — Role-Based Sidebar
+// src/components/layout/DashboardSidebar.tsx — UPDATED with all new pages
+// REPLACE your existing DashboardSidebar.tsx with this version
 
 "use client";
 
@@ -6,8 +7,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-
-// ─── Menu Config Per Role ───────────────────────────
 
 interface MenuItem {
   label: string;
@@ -20,14 +19,13 @@ const menuConfig: Record<string, MenuItem[]> = {
     { label: "Dashboard", href: "/student", icon: "◆" },
     { label: "Notes", href: "/student/notes", icon: "📚" },
     { label: "Videos", href: "/student/videos", icon: "🎥" },
-    { label: "Practice", href: "/student/practice", icon: "✏️" },
-
     { label: "Quizzes", href: "/student/quizzes", icon: "📝" },
     { label: "Exams", href: "/student/exams", icon: "🎓" },
-
+    { label: "Practice", href: "/student/practice", icon: "🎯" },
+    { label: "Flashcards", href: "/student/flashcards", icon: "🃏" },
     { label: "Marks", href: "/student/marks", icon: "📊" },
     { label: "AI Tutor", href: "/student/ai-tutor", icon: "🧠" },
-
+    { label: "Leaderboard", href: "/student/leaderboard", icon: "🏆" },
   ],
   TEACHER: [
     { label: "Dashboard", href: "/teacher", icon: "◆" },
@@ -35,6 +33,7 @@ const menuConfig: Record<string, MenuItem[]> = {
     { label: "Videos", href: "/teacher/videos", icon: "🎥" },
     { label: "Quizzes", href: "/teacher/quizzes", icon: "📝" },
     { label: "Exams", href: "/teacher/exams", icon: "🎓" },
+    { label: "Students", href: "/teacher/students", icon: "👥" },
     { label: "Analytics", href: "/teacher/analytics", icon: "📊" },
   ],
   ADMIN: [
@@ -43,8 +42,6 @@ const menuConfig: Record<string, MenuItem[]> = {
     { label: "Analytics", href: "/admin/analytics", icon: "📊" },
   ],
 };
-
-// ─── Component ──────────────────────────────────────
 
 interface SidebarProps {
   role: string;
@@ -85,14 +82,9 @@ export default function DashboardSidebar({ role, userName, userEmail }: SidebarP
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground transition-colors"
-            aria-label="Toggle sidebar"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              {collapsed ? (
-                <path d="M6 3l5 5-5 5" />
-              ) : (
-                <path d="M10 3L5 8l5 5" />
-              )}
+              {collapsed ? <path d="M6 3l5 5-5 5" /> : <path d="M10 3L5 8l5 5" />}
             </svg>
           </button>
         </div>
@@ -105,16 +97,14 @@ export default function DashboardSidebar({ role, userName, userEmail }: SidebarP
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
                   active
                     ? "bg-primary/10 text-primary font-medium"
                     : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
                 title={collapsed ? item.label : undefined}
               >
-                <span className="text-base flex-shrink-0 w-5 text-center">
-                  {item.icon}
-                </span>
+                <span className="text-base flex-shrink-0 w-5 text-center">{item.icon}</span>
                 {!collapsed && <span>{item.label}</span>}
                 {active && !collapsed && (
                   <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
@@ -154,7 +144,7 @@ export default function DashboardSidebar({ role, userName, userEmail }: SidebarP
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 glass border-t border-border">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 glass border-t border-border safe-bottom">
         <div className="flex justify-around py-2">
           {items.slice(0, 5).map((item) => {
             const active = isActive(item.href);
