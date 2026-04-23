@@ -1,7 +1,7 @@
 // src/services/ai.service.ts — AI Business Logic (OpenAI)
 
 import openai, { AI_CONFIG, SYSTEM_PROMPTS } from "@/lib/openai";
-import type { QuestionType } from "@/types";
+import { QuestionType } from "@prisma/client";
 
 // ─── Types ─────────────────────────────────────────
 
@@ -27,6 +27,30 @@ type RawQuestion = {
   points?: number;
 };
 
+type RawSection = {
+  title?: string;
+  description?: string;
+  questions?: RawQuestion[];
+};
+
+// ─── Helpers ───────────────────────────────────────
+
+function mapToQuestionType(type?: string): QuestionType {
+  switch (type) {
+    case "SHORT_ANSWER":
+      return QuestionType.SHORT_ANSWER;
+    case "LONG_ANSWER":
+      return QuestionType.LONG_ANSWER;
+    case "MCQ":
+    default:
+      return QuestionType.MCQ;
+  }
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((v) => typeof v === "string");
+}
+
 // ─── Note Summarizer ────────────────────────────────
 
 export async function summarizeNote(
@@ -44,12 +68,13 @@ export async function summarizeNote(
         content: `Summarize the following academic notes${
           title ? ` titled "${title}"` : ""
         }.
-Create a structured summary with:
+
+Create:
 - Key concepts (bold important terms)
 - Main takeaways (bullet points)
 - Important formulas/definitions if any
 
-Notes content:
+Notes:
 ${content.slice(0, 12000)}`,
       },
     ],
@@ -86,14 +111,14 @@ export async function generateQuizFromTopic(
 
 ${typeInstructions}
 
-Return ONLY valid JSON array with this exact schema (no markdown, no backticks):
+Return ONLY valid JSON array:
 [
   {
-    "type": "MCQ" or "SHORT_ANSWER",
-    "question": "question text",
+    "type": "MCQ" | "SHORT_ANSWER",
+    "question": "...",
     "options": ["A", "B", "C", "D"],
-    "correctAnswer": "exact correct answer",
-    "points": 1 or 2
+    "correctAnswer": "...",
+    "points": 1
   }
 ]`,
       },
@@ -111,14 +136,14 @@ Return ONLY valid JSON array with this exact schema (no markdown, no backticks):
     }
 
     return parsed.map((q: RawQuestion): GeneratedQuestion => ({
-      type: q.type === "SHORT_ANSWER" ? "SHORT_ANSWER" : "MCQ",
+      type: mapToQuestionType(q.type),
       question: q.question ?? "",
       options:
-        q.type === "MCQ" && Array.isArray(q.options)
+        q.type === "MCQ" && isStringArray(q.options)
           ? q.options.slice(0, 4)
           : undefined,
       correctAnswer: q.correctAnswer ?? "",
-      points: q.points ?? 1,
+      points: typeof q.points === "number" ? q.points : 1,
     }));
   } catch (err: unknown) {
     console.error("Failed to parse AI quiz response:", err);
@@ -145,7 +170,7 @@ export async function generateExam(
 
 Structure: ${sectionCount} sections, ~${questionsPerSection} questions each.
 
-Return ONLY valid JSON array (no markdown):
+Return ONLY valid JSON:
 [
   {
     "title": "Section A",
@@ -156,7 +181,7 @@ Return ONLY valid JSON array (no markdown):
         "question": "...",
         "options": [],
         "correctAnswer": "...",
-        "points": 1-5
+        "points": 1
       }
     ]
   }
@@ -175,7 +200,22 @@ Return ONLY valid JSON array (no markdown):
       throw new Error("Invalid AI response format");
     }
 
-    return parsed as GeneratedSection[];
+    return parsed.map((section: RawSection): GeneratedSection => ({
+      title: section.title ?? "Untitled Section",
+      description: section.description,
+      questions: Array.isArray(section.questions)
+        ? section.questions.map((q: RawQuestion): GeneratedQuestion => ({
+            type: mapToQuestionType(q.type),
+            question: q.question ?? "",
+            options:
+              q.type === "MCQ" && isStringArray(q.options)
+                ? q.options.slice(0, 4)
+                : undefined,
+            correctAnswer: q.correctAnswer ?? "",
+            points: typeof q.points === "number" ? q.points : 1,
+          }))
+        : [],
+    }));
   } catch (err: unknown) {
     console.error("Failed to parse AI exam response:", err);
     throw new Error("AI returned invalid exam format. Please try again.");
@@ -189,7 +229,7 @@ export async function tutorChat(
   context?: string
 ) {
   const systemMessage = context
-    ? `${SYSTEM_PROMPTS.tutor}\n\nCurrent course/topic context: ${context}`
+    ? `${SYSTEM_PROMPTS.tutor}\n\nContext: ${context}`
     : SYSTEM_PROMPTS.tutor;
 
   return openai.chat.completions.create({
@@ -218,14 +258,14 @@ export async function generateFeedback(
         role: "user",
         content: `Question: ${question}
 
-Student's Answer: ${studentAnswer}
+Student Answer: ${studentAnswer}
 
 Correct Answer: ${correctAnswer}
 
-Provide constructive feedback explaining:
-1. What was correct/incorrect
-2. Why the correct answer is right
-3. A tip for remembering this concept`,
+Give:
+1. What is correct/incorrect
+2. Why correct answer is right
+3. Study tip`,
       },
     ],
   });
