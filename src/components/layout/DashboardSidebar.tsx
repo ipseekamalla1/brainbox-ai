@@ -20,10 +20,14 @@ const menuConfig: Record<string, MenuItem[]> = {
     { label: "Dashboard", href: "/student", icon: "◆" },
     { label: "Notes", href: "/student/notes", icon: "📚" },
     { label: "Videos", href: "/student/videos", icon: "🎥" },
+    { label: "Practice", href: "/student/practice", icon: "✏️" },
+
     { label: "Quizzes", href: "/student/quizzes", icon: "📝" },
     { label: "Exams", href: "/student/exams", icon: "🎓" },
+
     { label: "Marks", href: "/student/marks", icon: "📊" },
     { label: "AI Tutor", href: "/student/ai-tutor", icon: "🧠" },
+
   ],
   TEACHER: [
     { label: "Dashboard", href: "/teacher", icon: "◆" },
