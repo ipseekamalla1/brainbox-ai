@@ -1,27 +1,26 @@
-// src/app/layout.tsx — Root Layout
+// src/app/layout.tsx
 
 import type { Metadata } from "next";
-import { DM_Sans, Playfair_Display, JetBrains_Mono, Geist } from "next/font/google";
+import { DM_Sans, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 
-// ─── Fonts ──────────────────────────────────────────
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-serif",
+  variable: "--font-playfair",
   display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-jetbrains",
   display: "swap",
 });
-
-// ─── Metadata ───────────────────────────────────────
 
 export const metadata: Metadata = {
   title: {
@@ -29,19 +28,8 @@ export const metadata: Metadata = {
     template: "%s | Brainbox AI",
   },
   description:
-    "AI-powered university learning management system. Smart quizzes, exams, video learning, AI tutoring, and analytics — all in one platform.",
-  keywords: [
-    "LMS",
-    "AI education",
-    "university",
-    "online learning",
-    "quizzes",
-    "exams",
-    "AI tutor",
-  ],
+    "AI-powered university learning management system with smart quizzes, exams, video learning, AI tutoring, and analytics.",
 };
-
-// ─── Layout ─────────────────────────────────────────
 
 export default function RootLayout({
   children,
@@ -51,14 +39,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(
-        playfair.variable,
-        jetbrainsMono.variable,
-        geist.variable,
-        "font-sans dark" // default dark ON (can be changed by toggle)
-      )}
+      className={`${dmSans.variable} ${playfair.variable} ${jetbrainsMono.variable} dark`}
+      suppressHydrationWarning
     >
-      <body className="font-sans antialiased min-h-screen bg-background text-foreground">
+      <body className="min-h-screen">
         {children}
       </body>
     </html>

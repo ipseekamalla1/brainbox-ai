@@ -36,16 +36,13 @@ export default function TeacherNotesPage() {
     size: number;
   } | null>(null);
 
-  // ✅ FETCH NOTES
+  // ─── FETCH NOTES ─────────────────────────────
   const fetchNotes = useCallback(async () => {
     if (!session?.user?.id) return;
 
     setLoading(true);
 
-    const res = await fetch(
-      `/api/notes?uploadedBy=${session.user.id}`
-    );
-
+    const res = await fetch(`/api/notes?uploadedBy=${session.user.id}`);
     const data = await res.json();
 
     if (data.success) {
@@ -59,7 +56,7 @@ export default function TeacherNotesPage() {
     if (status === "authenticated") fetchNotes();
   }, [status, fetchNotes]);
 
-  // ✅ SAVE NOTE
+  // ─── SAVE NOTE ───────────────────────────────
   const handleSaveNote = async () => {
     if (!pendingFile) return;
 
@@ -93,27 +90,35 @@ export default function TeacherNotesPage() {
     setSaving(false);
   };
 
-  // ✅ DOWNLOAD FUNCTION (IMPORTANT)
+  // ─── ⭐ DOWNLOAD FROM SUPABASE (FIXED) ─────────────────
   const handleDownload = async (fileUrl: string) => {
-    const path = fileUrl.split("/storage/v1/object/public/uploads/")[1];
+    try {
+      const path = fileUrl.split("/storage/v1/object/public/uploads/")[1];
 
-    const { data, error } = await supabase.storage
-      .from("uploads")
-      .download(path);
+      const { data, error } = await supabase.storage
+        .from("uploads")
+        .download(path);
 
-    if (error) {
-      console.error(error);
-      return;
+      if (error) throw error;
+
+      const url = window.URL.createObjectURL(data);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = path.split("/").pop() || "file";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed:", err);
     }
-
-    const url = URL.createObjectURL(data);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = path.split("/").pop() || "file";
-    a.click();
-
-    URL.revokeObjectURL(url);
   };
+
+  if (status === "loading") {
+    return <p className="p-6">Loading session...</p>;
+  }
 
   return (
     <div className="p-6">
@@ -135,9 +140,9 @@ export default function TeacherNotesPage() {
           <FileUpload
             type="notes"
             userId={session?.user?.id || ""}
-            onUploadComplete={(url, name, size) => {
-              setPendingFile({ url, name, size });
-            }}
+            onUploadComplete={(url, name, size) =>
+              setPendingFile({ url, name, size })
+            }
           />
 
           {pendingFile && (
@@ -169,7 +174,7 @@ export default function TeacherNotesPage() {
         </div>
       )}
 
-      {/* NOTES LIST */}
+      {/* NOTES */}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -177,17 +182,24 @@ export default function TeacherNotesPage() {
           {notes.map((note) => (
             <div key={note.id} className="border p-4 rounded">
               <h3 className="font-bold">{note.title}</h3>
-              <p className="text-sm text-gray-500">
-                {note.subject}
-              </p>
+              <p className="text-sm text-gray-500">{note.subject}</p>
 
               <div className="flex gap-4 mt-3">
+                {/* OPEN */}
+                <a
+                  href={note.fileUrl}
+                  target="_blank"
+                  className="text-blue-600"
+                >
+                  Open
+                </a>
+
                 {/* DOWNLOAD */}
                 <button
                   onClick={() => handleDownload(note.fileUrl)}
-                  className="text-blue-600"
+                  className="text-purple-600"
                 >
-                  ⬇ Download
+                  Download
                 </button>
 
                 {/* COPY */}
