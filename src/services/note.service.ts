@@ -35,3 +35,21 @@ export async function getNotes(filters?: {
     },
   });
 }
+
+export async function createNote(data: {
+  title: string;
+  subject: string;
+  topic?: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize?: number;
+  uploadedBy: string;
+  courseId?: string;
+}) {
+  return prisma.note.create({
+    data,
+    include: {
+      uploader: true,
+    },
+  });
+}
