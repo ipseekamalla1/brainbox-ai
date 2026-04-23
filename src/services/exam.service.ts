@@ -1,6 +1,7 @@
 // src/services/exam.service.ts — Exam Business Logic
 
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 // ─── Exam CRUD ──────────────────────────────────────
 
@@ -29,6 +30,8 @@ export async function getExams(filters?: {
 }
 
 export async function getExamById(id: string, includeAnswers = false) {
+  if (!id) throw new Error("Exam id is required");
+
   return prisma.exam.findUnique({
     where: { id },
     include: {
@@ -55,7 +58,6 @@ export async function getExamById(id: string, includeAnswers = false) {
     },
   });
 }
-
 export async function createExam(data: {
   title: string;
   description?: string;
@@ -120,7 +122,6 @@ export async function publishExam(id: string, publish: boolean) {
 // ─── Exam Attempts & Grading ────────────────────────
 
 export async function startExamAttempt(examId: string, userId: string) {
-  // Check scheduling window
   const exam = await prisma.exam.findUnique({ where: { id: examId } });
   if (!exam) throw new Error("Exam not found");
 
@@ -132,13 +133,11 @@ export async function startExamAttempt(examId: string, userId: string) {
     throw new Error("Exam window has closed");
   }
 
-  // Check existing unsubmitted attempt
   const existing = await prisma.examAttempt.findFirst({
     where: { examId, userId, submittedAt: null },
   });
   if (existing) return existing;
 
-  // Check if already submitted
   const submitted = await prisma.examAttempt.findFirst({
     where: { examId, userId, submittedAt: { not: null } },
   });
@@ -170,23 +169,24 @@ export async function submitExamAttempt(
   if (!attempt) throw new Error("Attempt not found");
   if (attempt.submittedAt) throw new Error("Already submitted");
 
-  // Flatten all questions
   const allQuestions = attempt.exam.sections.flatMap((s) => s.questions);
 
-  // Grade auto-gradeable questions
-  const gradedAnswers = answers.map((ans) => {
+  // ✅ FIXED: consistent Prisma type array
+  const gradedAnswers: Prisma.ExamAnswerCreateManyInput[] = answers.map((ans) => {
     const question = allQuestions.find((q) => q.id === ans.questionId);
-    if (!question) return { ...ans, isCorrect: null, score: null };
 
-    // LONG_ANSWER can't be auto-graded
+    const base: Prisma.ExamAnswerCreateManyInput = {
+      attemptId,
+      questionId: ans.questionId,
+      answer: ans.answer,
+      isCorrect: null,
+      score: null,
+    };
+
+    if (!question) return base;
+
     if (question.type === "LONG_ANSWER" || !question.correctAnswer) {
-      return {
-        attemptId,
-        questionId: ans.questionId,
-        answer: ans.answer,
-        isCorrect: null,
-        score: null,
-      };
+      return base;
     }
 
     const isCorrect =
@@ -202,12 +202,12 @@ export async function submitExamAttempt(
     };
   });
 
-  // Calculate score (only for auto-gradeable)
   const maxScore = allQuestions.reduce((sum, q) => sum + q.points, 0);
   const autoGradedScore = gradedAnswers.reduce(
     (sum, a) => sum + (a.score || 0),
     0
   );
+
   const pendingManualGrade = gradedAnswers.some((a) => a.isCorrect === null);
   const percentage = maxScore > 0 ? (autoGradedScore / maxScore) * 100 : 0;
 
@@ -219,7 +219,9 @@ export async function submitExamAttempt(
       data: {
         score: autoGradedScore,
         maxScore,
-        percentage: pendingManualGrade ? null : Math.round(percentage * 100) / 100,
+        percentage: pendingManualGrade
+          ? null
+          : Math.round(percentage * 100) / 100,
         submittedAt: new Date(),
         autoSubmit,
       },
@@ -262,8 +264,14 @@ export async function getExamAnalytics(examId: string) {
 
   if (attempts.length === 0) return null;
 
-  const scores = attempts.filter((a) => a.percentage !== null).map((a) => a.percentage!);
-  const average = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+  const scores = attempts
+    .filter((a) => a.percentage !== null)
+    .map((a) => a.percentage!);
+
+  const average =
+    scores.length > 0
+      ? scores.reduce((a, b) => a + b, 0) / scores.length
+      : 0;
 
   return {
     totalAttempts: attempts.length,
