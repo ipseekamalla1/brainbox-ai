@@ -1,4 +1,10 @@
-
+// lib/enrollment-service.ts
+// Works with your EXISTING Enrollment model.
+// Key difference from a fresh design:
+//   - Your Enrollment has a `role` field (STUDENT/TEACHER) 
+//   - Teacher assignment = Enrollment with role: TEACHER
+//   - Student enrollment = Enrollment with role: STUDENT
+//   - We added `status` field (ACTIVE/DROPPED/COMPLETED)
 
 import { prisma } from "@/lib/prisma";
 import { Role, EnrollmentStatus } from "@prisma/client";
