@@ -3,14 +3,10 @@
 import { useState, useEffect } from "react";
 import {
   Plus,
-  Building2,
-  Users,
-  BookOpen,
-  ChevronRight,
-  Search,
   Loader2,
-  Trash2,
   RefreshCw,
+  Trash2,
+  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -25,6 +21,7 @@ interface Department {
   };
 }
 
+/* ================= MODAL (unchanged logic, theme-improved) ================= */
 function CreateModal({
   open,
   onClose,
@@ -64,18 +61,13 @@ function CreateModal({
       });
 
       const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Something went wrong");
+      if (!res.ok) throw new Error(data.error);
 
       onCreated(data.department);
       setForm({ name: "", slug: "", description: "" });
       onClose();
-    } catch (err: unknown) {
-      // ✅ FIX: no "any"
-      const message =
-        err instanceof Error ? err.message : "Something went wrong";
-
-      setError(message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error");
     } finally {
       setLoading(false);
     }
@@ -84,65 +76,59 @@ function CreateModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-xl">
-        <div className="px-6 py-4 border-b">
-          <h2 className="font-semibold text-lg">Create Department</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="w-full max-w-md bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
+
+        <div className="px-5 py-4 border-b border-border">
+          <h2 className="font-semibold text-sm">Create Department</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          <div>
-            <label className="text-sm font-medium">Name</label>
-            <input
-              value={form.name}
-              onChange={(e) => handleName(e.target.value)}
-              className="w-full border px-3 py-2 rounded mt-1"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium">Slug</label>
-            <input
-              value={form.slug}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, slug: e.target.value }))
-              }
-              className="w-full border px-3 py-2 rounded mt-1"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium">Description</label>
-            <textarea
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              className="w-full border px-3 py-2 rounded mt-1"
-            />
-          </div>
-
+        <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {error && (
-            <p className="text-red-500 text-sm bg-red-50 p-2 rounded">
+            <p className="text-sm text-destructive bg-destructive/10 border border-destructive/20 p-2 rounded-lg">
               {error}
             </p>
           )}
 
-          <div className="flex gap-3 pt-2">
+          <input
+            value={form.name}
+            onChange={(e) => handleName(e.target.value)}
+            placeholder="Department name"
+            className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            required
+          />
+
+          <input
+            value={form.slug}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, slug: e.target.value }))
+            }
+            placeholder="slug"
+            className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm"
+            required
+          />
+
+          <textarea
+            value={form.description}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, description: e.target.value }))
+            }
+            placeholder="Description"
+            className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm"
+          />
+
+          <div className="flex gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 border py-2 rounded"
+              className="flex-1 py-2 rounded-lg border border-border text-xs font-medium hover:bg-muted/30"
             >
               Cancel
             </button>
 
             <button
               disabled={loading}
-              type="submit"
-              className="flex-1 bg-black text-white py-2 rounded flex items-center justify-center gap-2"
+              className="flex-1 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               Create
@@ -154,6 +140,7 @@ function CreateModal({
   );
 }
 
+/* ================= PAGE ================= */
 export default function DepartmentsPage() {
   const [depts, setDepts] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,11 +161,9 @@ export default function DepartmentsPage() {
       method: "DELETE",
     });
 
-    const data = await res.json();
-
-    if (!res.ok) return alert(data.error);
-
-    setDepts((prev) => prev.filter((d) => d.id !== id));
+    if (res.ok) {
+      setDepts((p) => p.filter((d) => d.id !== id));
+    }
   };
 
   const handleSync = async (id: string) => {
@@ -190,7 +175,7 @@ export default function DepartmentsPage() {
 
     if (res.ok) {
       alert(
-        `Sync done. ${data.totalEnrolled} enrolled, ${data.totalReactivated} reactivated.`
+        `Synced: ${data.totalEnrolled} enrolled, ${data.totalReactivated} reactivated`
       );
     }
   };
@@ -202,57 +187,80 @@ export default function DepartmentsPage() {
   );
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="p-6">
+
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">Departments</h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-sm text-muted-foreground">
             Manage departments, courses, and students
           </p>
         </div>
 
         <button
           onClick={() => setShowCreate(true)}
-          className="bg-black text-white px-4 py-2 rounded flex items-center gap-2"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 flex items-center gap-2"
         >
-          <Plus className="w-4 h-4" /> New Department
+          <Plus className="w-4 h-4" />
+          New Department
         </button>
       </div>
 
+      {/* SEARCH */}
       <input
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search..."
-        className="w-full border px-3 py-2 rounded mb-4"
+        placeholder="Search departments..."
+        className="w-full px-3 py-2.5 mb-5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
 
+      {/* LIST */}
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-muted-foreground text-sm">Loading...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-gray-500">No departments found</p>
+        <p className="text-muted-foreground text-sm">No departments found</p>
       ) : (
         <div className="grid md:grid-cols-3 gap-4">
           {filtered.map((dept) => (
-            <div key={dept.id} className="border rounded p-4 shadow-sm">
-              <h2 className="font-semibold">{dept.name}</h2>
-              <p className="text-sm text-gray-500">/{dept.slug}</p>
+            <div
+              key={dept.id}
+              className="border border-border bg-card rounded-2xl p-4 hover:shadow-sm transition"
+            >
+              <h2 className="font-semibold text-sm">{dept.name}</h2>
+              <p className="text-xs text-muted-foreground">/{dept.slug}</p>
 
-              <div className="mt-2 text-sm">
+              <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>Students: {dept._count?.students ?? 0}</p>
                 <p>Courses: {dept._count?.courses ?? 0}</p>
               </div>
 
-              <div className="flex gap-2 mt-3">
-                <button onClick={() => handleSync(dept.id)} className="text-blue-600 text-sm">
-                  Sync
-                </button>
+              {/* ACTIONS */}
+              <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
+                <div className="flex gap-3 text-xs">
+                  <button
+                    onClick={() => handleSync(dept.id)}
+                    className="text-primary hover:underline flex items-center gap-1"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    Sync
+                  </button>
 
-                <button onClick={() => handleDelete(dept.id)} className="text-red-600 text-sm">
-                  Delete
-                </button>
+                  <button
+                    onClick={() => handleDelete(dept.id)}
+                    className="text-destructive hover:underline flex items-center gap-1"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Delete
+                  </button>
+                </div>
 
-                <Link href={`/admin/departments/${dept.id}`} className="text-green-600 text-sm">
+                <Link
+                  href={`/admin/departments/${dept.id}`}
+                  className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                >
                   Open
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
@@ -260,10 +268,11 @@ export default function DepartmentsPage() {
         </div>
       )}
 
+      {/* MODAL */}
       <CreateModal
         open={showCreate}
         onClose={() => setShowCreate(false)}
-        onCreated={(d) => setDepts((prev) => [d, ...prev])}
+        onCreated={(d) => setDepts((p) => [d, ...p])}
       />
     </div>
   );
