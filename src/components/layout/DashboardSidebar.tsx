@@ -43,8 +43,8 @@ const menuConfig: Record<string, MenuItem[]> = {
     { label: "Dashboard", href: "/admin", icon: "◆" },
     { label: "Users", href: "/admin/users", icon: "👥" },
     { label: "Analytics", href: "/admin/analytics", icon: "📊" },
-    { label: "Departments", href: "/admin/departments", icon: "📊" },
-{ label: "Courses", href: "/admin/courses", icon: "📊" },
+    { label: "Departments", href: "/admin/departments", icon: "🏢" },
+      { label: "Courses", href: "/admin/courses", icon: "📚" },
 
   ],
 };
