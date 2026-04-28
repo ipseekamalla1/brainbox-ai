@@ -8,6 +8,9 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 
+import { Building2, BookOpen } from "lucide-react";
+
+
 interface MenuItem {
   label: string;
   href: string;
@@ -40,6 +43,9 @@ const menuConfig: Record<string, MenuItem[]> = {
     { label: "Dashboard", href: "/admin", icon: "◆" },
     { label: "Users", href: "/admin/users", icon: "👥" },
     { label: "Analytics", href: "/admin/analytics", icon: "📊" },
+    { label: "Departments", href: "/admin/departments", icon: "📊" },
+{ label: "Courses", href: "/admin/courses", icon: "📊" },
+
   ],
 };
 
