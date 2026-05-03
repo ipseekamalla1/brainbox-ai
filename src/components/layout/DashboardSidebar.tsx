@@ -9,7 +9,7 @@ import { signOut } from "next-auth/react";
 import { useState } from "react";
 
 import { Building2, BookOpen } from "lucide-react";
-
+import ThemeToggle from "../theme/ThemeToggle";
 
 interface MenuItem {
   label: string;
@@ -81,7 +81,7 @@ export default function DashboardSidebar({ role, userName, userEmail }: SidebarP
                 B
               </div>
               <span className="font-serif font-bold text-sm">
-                Brainbox<span className="text-primary">AI</span>
+                Brainbox<span className="text-primary">AI <ThemeToggle></ThemeToggle></span>
               </span>
             </Link>
           )}
@@ -135,6 +135,7 @@ export default function DashboardSidebar({ role, userName, userEmail }: SidebarP
               </div>
             )}
           </div>
+          
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className={`mt-3 w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors ${

@@ -91,7 +91,6 @@ export default function NewCoursePage() {
         </div>
         <div className="mb-6">
           <h1 className="font-serif text-2xl font-bold text-foreground">Create Course</h1>
-          <p className="text-sm text-muted-foreground mt-1">Students in the selected department are auto-enrolled.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">

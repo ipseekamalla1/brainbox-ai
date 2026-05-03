@@ -1,12 +1,10 @@
 // app/api/courses/route.ts — UPDATED
-// Admin creates course → auto-enrolls dept students + optionally assigns teacher
 
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
-import { enrollDepartmentInCourse, assignTeacher } from "@/services/enrollement.service";
 import { z } from "zod";
 
 const createSchema = z.object({
@@ -126,12 +124,8 @@ export async function POST(req: NextRequest) {
     teacherResult = await assignTeacher(teacherId, course.id);
   }
  
-  // Auto-enroll all department students
-  let enrollResult = null;
-  if (parsed.data.departmentId) {
-    enrollResult = await enrollDepartmentInCourse(course.id, parsed.data.departmentId);
-  }
  
-  return NextResponse.json({ course, teacherAssignment: teacherResult, enrollment: enrollResult }, { status: 201 });
+ 
+  return NextResponse.json({ course, teacherAssignment: teacherResult}, { status: 201 });
 }
  

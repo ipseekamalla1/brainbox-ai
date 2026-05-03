@@ -32,7 +32,7 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       className="px-3 py-2 rounded-lg border border-border bg-card text-foreground hover:shadow-md transition-all"
     >
-      {isDark ? "🌙 Dark" : "☀️ Light"}
+      {isDark ? "🌙 " : "☀️"}
     </button>
   );
 }
