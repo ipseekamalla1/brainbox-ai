@@ -68,8 +68,8 @@ export default function CourseEnrollmentsPage() {
 
     setStudents(Array.from(uniqueStudentsMap.values()));
 
-    setAllTeachers(t.users ?? []);
-    setAllStudents(s.users ?? []);
+   setAllTeachers(t.data?.users ?? []);
+setAllStudents(s.data?.users ?? []);
 
     setLoading(false);
   };
