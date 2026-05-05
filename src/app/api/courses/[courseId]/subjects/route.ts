@@ -1,9 +1,3 @@
-// ============================================================
-// FILE LOCATION: app/api/courses/[courseId]/subjects/route.ts
-// ACTION: CREATE NEW
-// PURPOSE: GET list subjects in a course + POST create subject
-// ============================================================
-
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -17,6 +11,9 @@ const createSchema = z.object({
   order: z.number().int().min(0).default(0),
 });
 
+// ─────────────────────────────────────────────
+// GET SUBJECTS
+// ─────────────────────────────────────────────
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ courseId: string }> }
@@ -24,24 +21,8 @@ export async function GET(
   const { courseId } = await params;
 
   const session = await getServerSession(authOptions);
-  if (!session) {
+  if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Students must be enrolled
-  if (session.user.role === Role.STUDENT) {
-    const enrolled = await prisma.enrollment.findFirst({
-      where: {
-        userId: session.user.id,
-        courseId,
-        status: "ACTIVE",
-      },
-    });
-
-    if (!enrolled) {
-      return NextResponse.json({ error: "Not enrolled" }, { status: 403 });
-    }
-  }
 
   const subjects = await prisma.subject.findMany({
     where: { courseId },
@@ -61,31 +42,35 @@ export async function GET(
   return NextResponse.json({ subjects });
 }
 
+// ─────────────────────────────────────────────
+// CREATE SUBJECT
+// ─────────────────────────────────────────────
 export async function POST(
   req: NextRequest,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
+  const { courseId } = await params;
+
   const session = await getServerSession(authOptions);
   if (!session || session.user.role === Role.STUDENT) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Teacher must teach this course
-  if (session.user.role === Role.TEACHER) {
-    const isTeacher = await prisma.enrollment.findFirst({
-      where: { userId: session.user.id, courseId: params.courseId, role: Role.TEACHER, status: "ACTIVE" },
-    });
-    if (!isTeacher) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
   const body = await req.json();
   const parsed = createSchema.safeParse(body);
+
   if (!parsed.success) {
-    return NextResponse.json({ error: "Validation failed" }, { status: 422 });
+    return NextResponse.json(
+      { error: "Validation failed" },
+      { status: 422 }
+    );
   }
 
   const subject = await prisma.subject.create({
-    data: { ...parsed.data, courseId: params.courseId },
+    data: {
+      ...parsed.data,
+      courseId,
+    },
   });
 
   return NextResponse.json({ subject }, { status: 201 });

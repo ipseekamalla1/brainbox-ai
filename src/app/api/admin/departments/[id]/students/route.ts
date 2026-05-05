@@ -9,10 +9,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// =======================
+// GET — list students in a department
+// =======================
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params; // ✅ FIX (IMPORTANT)
+
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -23,7 +28,7 @@ export async function GET(
 
   const students = await prisma.user.findMany({
     where: {
-      departmentId: params.id,
+      departmentId: id, // ✅ use resolved id
       role: "STUDENT",
       ...(search
         ? {
@@ -41,7 +46,16 @@ export async function GET(
       email: true,
       avatarUrl: true,
       createdAt: true,
-      _count: { select: { enrollments: { where: { status: "ACTIVE", role: "STUDENT" } } } },
+      _count: {
+        select: {
+          enrollments: {
+            where: {
+              status: "ACTIVE",
+              role: "STUDENT",
+            },
+          },
+        },
+      },
     },
   });
 

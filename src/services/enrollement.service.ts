@@ -200,3 +200,53 @@ export async function getTeacherStudents(
 
   return Array.from(map.values());
 }
+
+export async function enrollStudentInDepartmentCourses(
+  userId: string,
+  departmentId: string
+) {
+  const courses = await prisma.course.findMany({
+    where: { departmentId },
+    select: { id: true },
+  });
+
+  const results = [];
+
+  for (const course of courses) {
+    const res = await enrollStudent(userId, course.id);
+    results.push({ courseId: course.id, status: res });
+  }
+
+  return results;
+}
+
+export async function handleDepartmentChange(
+  userId: string,
+  oldDeptId: string | null,
+  newDeptId: string
+) {
+  let dropped = 0;
+
+  if (oldDeptId) {
+    const oldCourses = await prisma.course.findMany({
+      where: { departmentId: oldDeptId },
+      select: { id: true },
+    });
+
+    const result = await prisma.enrollment.updateMany({
+      where: {
+        userId,
+        courseId: { in: oldCourses.map(c => c.id) },
+        status: EnrollmentStatus.ACTIVE,
+        role: Role.STUDENT,
+      },
+      data: { status: EnrollmentStatus.DROPPED },
+    });
+
+    dropped = result.count;
+  }
+
+  const enrollment = await enrollStudentInDepartmentCourses(userId, newDeptId);
+
+  return { dropped, result: enrollment };
+}

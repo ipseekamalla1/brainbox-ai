@@ -1,8 +1,11 @@
+"use client";
 // src/app/page.tsx — Landing Page (Home) — Themed to globals.css
 
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { useEffect } from "react";
+
 
 // ─── Data ───────────────────────────────────────────
 
@@ -381,6 +384,21 @@ const css = `
 // ─── Page ─────────────────────────────────────────────
 
 export default function HomePage() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".bb-rev");
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.08 });
+
+    els.forEach((el) => io.observe(el));
+
+    return () => io.disconnect();
+  }, []);
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
