@@ -66,12 +66,21 @@ export async function POST(
     );
   }
 
-  const subject = await prisma.subject.create({
-    data: {
-      ...parsed.data,
-      courseId,
+ const subject = await prisma.subject.create({
+  data: {
+    ...parsed.data,
+    courseId,
+  },
+  include: {
+    _count: {
+      select: {
+        notes: true,
+        videos: true,
+        quizzes: true,
+        exams: true,
+      },
     },
-  });
-
+  },
+});
   return NextResponse.json({ subject }, { status: 201 });
 }

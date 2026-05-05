@@ -29,6 +29,20 @@ export default function FileUpload({
   const [fileName, setFileName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const simulateProgress = () => {
+    let value = 0;
+    const interval = setInterval(() => {
+      value += Math.random() * 20;
+      if (value >= 95) {
+        value = 95;
+        clearInterval(interval);
+      }
+      setProgress(Math.floor(value));
+    }, 200);
+
+    return interval;
+  };
+
   const handleFile = async (file: File) => {
     if (!userId) return onError?.("User not authenticated");
 
@@ -40,11 +54,14 @@ export default function FileUpload({
     setFileName(file.name);
     setProgress(0);
 
+    const progressInterval = simulateProgress();
+
     try {
-      const filePath = `${type}/${userId}/${Date.now()}-${file.name}`;
+      const cleanName = file.name.replace(/\s/g, "-");
+      const filePath = `${type}/${userId}/${Date.now()}-${cleanName}`;
 
       const { error } = await supabase.storage
-        .from("uploads") // ✅ BUCKET NAME
+        .from("uploads")
         .upload(filePath, file, {
           cacheControl: "3600",
           upsert: false,
@@ -56,23 +73,41 @@ export default function FileUpload({
         .from("uploads")
         .getPublicUrl(filePath);
 
+      clearInterval(progressInterval);
       setProgress(100);
 
-      onUploadComplete(data.publicUrl, file.name, file.size);
-    } catch (err) {
-      console.error(err);
-      onError?.("Upload failed");
-    } finally {
-      setUploading(false);
-      setProgress(0);
-      setFileName("");
-    }
+      onUploadComplete(
+        data.publicUrl,
+        file.name,
+        file.size
+      );
+
+      setTimeout(() => {
+        setUploading(false);
+        setProgress(0);
+        setFileName("");
+      }, 500);
+    } catch (err: unknown) {
+  clearInterval(progressInterval);
+  console.error("Upload error:", err);
+
+  setUploading(false);
+  setProgress(0);
+  setFileName("");
+
+  const message =
+    err instanceof Error
+      ? err.message
+      : "Upload failed";
+
+  onError?.(message);
+}
   };
 
   return (
     <div
       onClick={() => inputRef.current?.click()}
-      className="border p-6 rounded-xl text-center cursor-pointer"
+      className="border border-border bg-card rounded-xl p-6 text-center cursor-pointer hover:border-primary/40 transition-all"
     >
       <input
         ref={inputRef}
@@ -85,19 +120,33 @@ export default function FileUpload({
         }}
       />
 
+      {/* Uploading State */}
       {uploading ? (
-        <div>
-          <p>Uploading {fileName}</p>
-          <div className="w-full bg-gray-200 h-2 mt-2 rounded">
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-foreground">
+            Uploading: {fileName}
+          </p>
+
+          <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
             <div
-              className="bg-blue-500 h-2 rounded"
+              className="h-2 bg-primary transition-all duration-200"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p>{progress}%</p>
+
+          <p className="text-xs text-muted-foreground">
+            {progress}%
+          </p>
         </div>
       ) : (
-        <p>Click or drag file to upload</p>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-foreground">
+            Click to upload or drag & drop
+          </p>
+          <p className="text-xs text-muted-foreground">
+            PDF, DOCX, PPT up to {maxSizeMB}MB
+          </p>
+        </div>
       )}
     </div>
   );
