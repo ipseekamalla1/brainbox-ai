@@ -22,8 +22,6 @@ const stats = [
   { value: "∞",  label: "Scalability" },
 ];
 
-const trustBadges = ["🔒 SOC 2 Compliant", "🌍 GDPR Ready", "⚡ 99.9% Uptime"];
-
 
 
 export default function HomePage() {

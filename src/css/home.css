@@ -78,6 +78,169 @@ body {
   transform: translateY(0);
 }
 
+
+
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+/* BACKGROUND */
+.hero-img-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-img {
+  object-fit: cover;
+  position: absolute;
+  top: -8%;
+}
+
+/* OVERLAY */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75),
+    rgba(0,0,0,0.35),
+    rgba(0,0,0,0.2)
+  );
+}
+
+/* CONTAINER */
+.hero-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 48px 100px;
+}
+
+/* EYEBROW */
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 28px;
+  font-family: "DM Sans", sans-serif;
+}
+
+.hero-eyebrow .line {
+  width: 32px;
+  height: 1px;
+  background: var(--gold-light);
+}
+
+/* TITLE */
+.hero-title {
+  font-size: clamp(52px, 8vw, 108px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -3px;
+  color: #FFFEF9;
+  margin-bottom: 32px;
+  max-width: 900px;
+}
+
+.italic-white {
+  font-style: italic;
+  color: #FFFEF9;
+}
+
+/* SUBTEXT */
+.hero-sub {
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(255,254,249,0.72);
+  max-width: 520px;
+  margin-bottom: 44px;
+}
+
+/* BUTTONS */
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 72px;
+}
+
+/* STATS */
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 56px;
+}
+
+.hero-stat {
+  display: flex;
+  align-items: center;
+  gap: 56px;
+}
+
+.hero-stat-value {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: -1px;
+}
+
+.hero-stat-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,254,249,0.5);
+  margin-top: 6px;
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+}
+
+/* SCROLL INDICATOR */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  right: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,254,249,0.4);
+}
+
+.scroll-line {
+  width: 1px;
+  height: 56px;
+  background: linear-gradient(to bottom, transparent, rgba(255,254,249,0.4));
+}
+
+.scroll-indicator span {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+}
+
+
 /* =========================
    TRUSTED BY SECTION
 ========================= */
