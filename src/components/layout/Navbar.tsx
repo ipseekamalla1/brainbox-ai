@@ -18,38 +18,97 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // When not scrolled: transparent bar over dark hero photo → white text
+  // When scrolled: solid background → default theme text
+  const isTransparent = !scrolled;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-background/80 glass border-b border-border shadow-sm"
-          : "bg-transparent"
-      }`}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        transition: "background 0.4s ease, backdrop-filter 0.4s ease, border-bottom 0.4s ease",
+        background: scrolled ? "hsl(var(--background) / 0.88)" : "transparent",
+        backdropFilter: scrolled ? "blur(14px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(14px)" : "none",
+        borderBottom: scrolled ? "1px solid hsl(var(--border))" : "1px solid transparent",
+      }}
     >
-      <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <nav
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "0 48px",
+          height: 68,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm transition-transform group-hover:scale-110">
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <div
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 8,
+              background: "#C9943A",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontWeight: 700,
+              fontSize: 16,
+              color: "#1A1208",
+              transition: "transform 0.2s",
+            }}
+          >
             B
           </div>
-          <span className="font-serif font-bold text-lg tracking-tight">
+          <span
+            style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontWeight: 700,
+              fontSize: 18,
+              letterSpacing: "-0.5px",
+              color: isTransparent ? "#FFFEF9" : "hsl(var(--foreground))",
+              transition: "color 0.4s",
+            }}
+          >
             Brainbox
-            <span className="text-primary ml-0.5">AI</span>
+            <span style={{ color: "#C9943A" }}>AI</span>
           </span>
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div style={{ display: "flex", alignItems: "center", gap: 36 }} className="hidden-mobile">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+              style={{
+                fontFamily: "'DM Sans', system-ui, sans-serif",
+                fontSize: 13,
+                fontWeight: 400,
+                letterSpacing: "0.3px",
+                color: isTransparent ? "rgba(255,254,249,0.75)" : "hsl(var(--muted-foreground))",
+                textDecoration: "none",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.color = isTransparent ? "#FFFEF9" : "hsl(var(--foreground))";
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.color = isTransparent ? "rgba(255,254,249,0.75)" : "hsl(var(--muted-foreground))";
+              }}
             >
               {link.label}
             </Link>
@@ -57,18 +116,37 @@ export default function Navbar() {
         </div>
 
         {/* Auth Buttons */}
-        <div className="hidden md:flex items-center gap-3">
-            <ThemeToggle />
-
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }} className="hidden-mobile">
+          <ThemeToggle />
           <Link
             href="/login"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors px-4 py-2"
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 13,
+              fontWeight: 400,
+              color: isTransparent ? "rgba(255,254,249,0.75)" : "hsl(var(--muted-foreground))",
+              textDecoration: "none",
+              padding: "8px 16px",
+              transition: "color 0.2s",
+            }}
           >
             Log in
           </Link>
           <Link
             href="/register"
-            className="text-sm font-medium bg-primary text-primary-foreground px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontSize: 13,
+              fontWeight: 500,
+              color: "#1A1208",
+              background: "#E8C878",
+              padding: "9px 22px",
+              borderRadius: 2,
+              textDecoration: "none",
+              letterSpacing: "0.2px",
+              transition: "background 0.2s",
+              boxShadow: "0 2px 12px rgba(201,148,58,0.3)",
+            }}
           >
             Get Started
           </Link>
@@ -77,22 +155,23 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 text-muted-foreground hover:text-foreground"
+          className="show-mobile"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 8,
+            color: isTransparent ? "#FFFEF9" : "hsl(var(--foreground))",
+            display: "none",
+          }}
           aria-label="Toggle menu"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5">
             {mobileOpen ? (
-              <path d="M5 5l10 10M15 5L5 15" />
+              <path d="M5 5l12 12M17 5L5 17" />
             ) : (
               <>
-                <path d="M3 6h14M3 10h14M3 14h14" />
+                <path d="M3 7h16M3 11h16M3 15h16" />
               </>
             )}
           </svg>
@@ -101,29 +180,43 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-background/95 glass border-b border-border">
-          <div className="px-6 py-4 space-y-3">
+        <div
+          style={{
+            background: "hsl(var(--background) / 0.96)",
+            backdropFilter: "blur(14px)",
+            borderBottom: "1px solid hsl(var(--border))",
+          }}
+        >
+          <div style={{ padding: "16px 24px 24px", display: "flex", flexDirection: "column", gap: 4 }}>
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="block text-sm text-muted-foreground hover:text-foreground py-2"
+                style={{
+                  display: "block",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14,
+                  color: "hsl(var(--muted-foreground))",
+                  textDecoration: "none",
+                  padding: "10px 0",
+                  borderBottom: "1px solid hsl(var(--border))",
+                }}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-border flex gap-3">
-                <ThemeToggle />
+            <div style={{ display: "flex", gap: 12, paddingTop: 16, alignItems: "center" }}>
+              <ThemeToggle />
               <Link
                 href="/login"
-                className="text-sm text-muted-foreground py-2"
+                style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "hsl(var(--muted-foreground))", textDecoration: "none", padding: "8px 0" }}
               >
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="text-sm font-medium bg-primary text-primary-foreground px-5 py-2 rounded-lg"
+                style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, color: "#1A1208", background: "#E8C878", padding: "9px 20px", borderRadius: 2, textDecoration: "none" }}
               >
                 Get Started
               </Link>
@@ -131,6 +224,13 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .hidden-mobile { display: none !important; }
+          .show-mobile { display: flex !important; }
+        }
+      `}</style>
     </header>
   );
 }

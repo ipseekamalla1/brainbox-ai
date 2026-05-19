@@ -1,0 +1,326 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+/* ───────── RESET ───────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ───────── ROOT COLORS ───────── */
+:root {
+  --cream: #FAF8F3;
+  --ink: #1A1208;
+  --ink-soft: #4A3F2F;
+  --gold: #C9943A;
+  --gold-light: #E8C878;
+  --gold-pale: #F5EDD6;
+  --white: #FFFFFF;
+  --border: rgba(26,18,8,0.10);
+  --border-strong: rgba(26,18,8,0.22);
+}
+
+body {
+  background: var(--cream);
+}
+
+/* ───────── FONTS ───────── */
+.f-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.f-body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* ───────── ANIMATIONS ───────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes imagePan {
+  from { transform: scale(1.06) translateY(0px); }
+  to { transform: scale(1.06) translateY(-18px); }
+}
+
+/* ───────── ANIMATION CLASSES ───────── */
+.anim-1 { animation: fadeUp 0.9s 0.05s ease both; }
+.anim-2 { animation: fadeUp 0.9s 0.18s ease both; }
+.anim-3 { animation: fadeUp 0.9s 0.30s ease both; }
+.anim-4 { animation: fadeUp 0.9s 0.44s ease both; }
+
+/* ───────── SCROLL REVEAL ───────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ───────── HERO ───────── */
+.hero-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-img {
+  position: absolute;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  object-fit: cover;
+  object-position: center top;
+  animation: imagePan 20s ease-in-out infinite alternate;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(26,18,8,0.72) 0%,
+    rgba(26,18,8,0.55) 45%,
+    rgba(26,18,8,0.40) 100%
+  );
+}
+
+/* ───────── TEXT STYLES ───────── */
+.text-gold {
+  background: linear-gradient(135deg, #C9943A 0%, #E8C878 50%, #C9943A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ───────── MARQUEE ───────── */
+.marquee-track {
+  animation: marquee 24s linear infinite;
+}
+
+/* ───────── SECTION LABEL ───────── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.section-label::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+}
+
+/* ───────── FEATURE CARDS ───────── */
+.feat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: all 0.35s ease;
+}
+
+.feat-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold);
+  box-shadow: 0 24px 60px rgba(26,18,8,0.13);
+}
+
+.feat-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  filter: saturate(0.85);
+}
+
+.feat-card:hover .feat-card-img {
+  transform: scale(1.04);
+}
+
+/* ───────── STEP CARDS ───────── */
+.step-card {
+  display: flex;
+  border: 1px solid var(--border);
+  background: var(--white);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+}
+
+.step-card:hover {
+  box-shadow: 0 16px 48px rgba(26,18,8,0.10);
+}
+
+.step-card-img {
+  width: 220px;
+  object-fit: cover;
+  filter: saturate(0.8);
+}
+
+/* ───────── TESTIMONIALS ───────── */
+.tcard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 36px 32px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.tcard:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+}
+
+/* ───────── BUTTONS ───────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--gold-light);
+  border-radius: 2px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(201,148,58,0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--gold);
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.4);
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  font-size: 13px;
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  background: var(--gold-pale);
+  border-color: var(--gold);
+}
+
+/* ───────── TAG ───────── */
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: var(--gold-pale);
+  border: 1px solid rgba(201,148,58,0.35);
+  padding: 4px 10px;
+}
+
+/* ───────── ANALYTICS ───────── */
+.analytics-hero {
+  position: relative;
+}
+
+.analytics-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.6);
+}
+
+.analytics-overlay {
+  position: relative;
+  background: rgba(26,18,8,0.82);
+}
+
+/* ───────── CTA ───────── */
+.cta-bg {
+  position: relative;
+}
+
+.cta-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cta-overlay {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(26,18,8,0.90),
+    rgba(26,18,8,0.75)
+  );
+}
+
+/* ───────── SCROLLBAR ───────── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+}
+
+/* ───────── RESPONSIVE ───────── */
+@media (max-width: 900px) {
+  .step-card {
+    flex-direction: column;
+  }
+
+  .step-card-img {
+    width: 100%;
+    height: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .feat-card {
+    margin-bottom: 16px;
+  }
+}

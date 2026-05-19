@@ -75,6 +75,13 @@
   --ring: 38 75% 30%;
   --radius: 0.625rem;
 }
+/* ── Feature cards — redesigned ── */
+:root {
+  --feat-white: #FFFFFF;
+  --feat-gold: #C9943A;
+  --feat-gold-pale: #F5EDD6;
+  --feat-ink: #1A1208;
+}
 
 /* ─── Dark Mode Variables ─── */
 .dark {
@@ -97,6 +104,168 @@
   --border: 240 8% 14%;
   --input: 240 8% 14%;
   --ring: 42 70% 55%;
+}
+/* ── Feature cards — redesigned ── */
+:root {
+  --feat-bg: #FFFFFF;
+  --feat-gold: #C9943A;
+  --feat-gold-pale: #F5EDD6;
+  --feat-ink: #1A1208;
+  --feat-ink-soft: #4A3F2F;
+  --feat-overlay: rgba(26,18,8,0.45);
+  --feat-shadow: rgba(26,18,8,0.14);
+  --feat-gold-shadow: rgba(201,148,58,0.18);
+  --feat-icon-shadow: rgba(26,18,8,0.12);
+}
+
+.dark {
+  --feat-bg: #0e0e14;
+  --feat-gold: #E8C878;
+  --feat-gold-pale: rgba(201,148,58,0.12);
+  --feat-ink: #F0E8D6;
+  --feat-ink-soft: #A89880;
+  --feat-overlay: rgba(10,8,4,0.55);
+  --feat-shadow: rgba(0,0,0,0.35);
+  --feat-gold-shadow: rgba(232,200,120,0.12);
+  --feat-icon-shadow: rgba(0,0,0,0.3);
+}
+
+.feat-card {
+  position: relative;
+  background: var(--feat-bg);
+  border: 1px solid hsl(var(--border));
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease, border-color 0.3s ease;
+  animation: cardIn 0.6s both;
+}
+.feat-card:nth-child(1) { border-radius: 16px 4px 16px 4px; animation-delay: 0.05s; }
+.feat-card:nth-child(2) { border-radius: 4px 16px 4px 16px; animation-delay: 0.12s; }
+.feat-card:nth-child(3) { border-radius: 16px 4px 16px 4px; animation-delay: 0.19s; }
+.feat-card:nth-child(4) { border-radius: 4px 16px 4px 16px; animation-delay: 0.26s; }
+.feat-card:nth-child(5) { border-radius: 16px 4px 16px 4px; animation-delay: 0.33s; }
+.feat-card:nth-child(6) { border-radius: 4px 16px 4px 16px; animation-delay: 0.40s; }
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.feat-card:hover {
+  transform: translateY(-8px) rotate(-0.4deg) scale(1.02);
+  box-shadow: 0 28px 64px var(--feat-shadow), 0 4px 12px var(--feat-gold-shadow);
+  border-color: var(--feat-gold);
+}
+
+.feat-card-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(201,148,58,0.08) 50%, transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 1;
+}
+.feat-card:hover .feat-card-shimmer { opacity: 1; }
+
+.feat-card-img-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 180px;
+}
+.feat-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.5s;
+  filter: saturate(0.75) brightness(0.95);
+}
+.feat-card:hover .feat-card-img {
+  transform: scale(1.08) translateY(-4px);
+  filter: saturate(1) brightness(1);
+}
+
+.feat-card-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, var(--feat-overlay) 100%);
+  transition: opacity 0.4s;
+}
+.feat-card:hover .feat-card-img-overlay { opacity: 0.8; }
+
+.feat-card-icon {
+  position: absolute;
+  bottom: -18px;
+  left: 22px;
+  width: 44px;
+  height: 44px;
+  background: var(--feat-bg);
+  border: 1.5px solid hsl(var(--border));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 16px var(--feat-icon-shadow);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s;
+  z-index: 2;
+}
+.feat-card:hover .feat-card-icon {
+  transform: scale(1.15) rotate(6deg);
+  border-color: var(--feat-gold);
+}
+
+.feat-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.feat-card-link {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--feat-gold);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: gap 0.25s ease;
+}
+.feat-card:hover .feat-card-link { gap: 9px; }
+
+.feat-card-link-arrow {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.feat-card:hover .feat-card-link-arrow { transform: translateX(3px); }
+
+/* tag pill — scoped to feat-card only */
+.feat-card .tag {
+  border-radius: 20px;
+  background: var(--feat-gold-pale);
+  color: var(--feat-gold);
+  transition: background 0.3s, color 0.3s;
+}
+.feat-card:hover .tag {
+  background: var(--feat-gold);
+  color: var(--feat-ink);
+}
+
+/* card title + desc colors */
+.feat-card .feat-card-title {
+  color: var(--feat-ink);
+}
+.feat-card .feat-card-desc {
+  color: var(--feat-ink-soft);
+}
+.feat-card:hover .feat-card-desc {
+  color: var(--feat-ink);
 }
 
 /* ─── Base Resets ─── */
@@ -257,4 +426,30 @@ body {
     background: white !important;
     color: black !important;
   }
+}
+
+/* ── Feature cards — redesigned ── */
+.feat-card {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease, border-color 0.3s ease;
+  animation: cardIn 0.6s both;
+}
+.feat-card:nth-child(1) { border-radius: 16px 4px 16px 4px; animation-delay: 0.05s; }
+.feat-card:nth-child(2) { border-radius: 4px 16px 4px 16px; animation-delay: 0.12s; }
+.feat-card:nth-child(3) { border-radius: 16px 4px 16px 4px; animation-delay: 0.19s; }
+.feat-card:nth-child(4) { border-radius: 4px 16px 4px 16px; animation-delay: 0.26s; }
+.feat-card:nth-child(5) { border-radius: 16px 4px 16px 4px; animation-delay: 0.33s; }
+.feat-card:nth-child(6) { border-radius: 4px 16px 4px 16px; animation-delay: 0.40s; }
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.site-bg {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
