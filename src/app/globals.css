@@ -453,3 +453,27 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
 }
+
+footer {
+  position: relative;
+}
+
+/* subtle floating glow animation */
+footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 10%, rgba(201,148,58,0.08), transparent 40%);
+  opacity: 0.6;
+  animation: footerGlow 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes footerGlow {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}

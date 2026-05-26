@@ -1,52 +1,83 @@
-import React from "react";
+"use client";
+
 import "@/css/home.css";
+import { motion } from "framer-motion";
+import CountUp from "react-countup";
 
 const stats = [
-  { value: "6+", label: "AI Features" },
-  { value: "3", label: "User Roles" },
-  { value: "∞", label: "Scalability" },
+  { value: 6, label: "AI Features", suffix: "+" },
+  { value: 3, label: "User Roles", suffix: "" },
+  { value: 99.9, label: "Uptime", suffix: "%" },
 ];
 
 const trustBadges = [
   "🔒 SOC 2 Compliant",
   "🌍 GDPR Ready",
-  "⚡ 99.9% Uptime",
+  "⚡ Secure by Design",
 ];
 
 export default function StatsTrustSection() {
   return (
     <section className="stats-section">
 
-      {/* Wide image */}
-      <div className="stats-image-wrap">
-        <img
-          src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1800&q=80"
+      {/* IMAGE */}
+      <motion.div
+        className="stats-image-wrap"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <motion.img
+          src="https://images.pexels.com/photos/6958506/pexels-photo-6958506.jpeg?_gl=1*1kdc0lx*_ga*NTcwMzU1MTg2LjE3NzkyMDM0MzE.*_ga_8JE65Q40S6*czE3Nzk0NzU2NTckbzIkZzEkdDE3Nzk0NzY5MzkkajMkbDAkaDA."
           alt="University campus"
           className="stats-image"
+          initial={{ scale: 1.1 }}
+          whileInView={{ scale: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
         />
-      </div>
+      </motion.div>
 
-      {/* Stats + badges */}
+      {/* CONTENT */}
       <div className="stats-content">
 
-        {/* Stats */}
+        {/* STATS */}
         <div className="stats-grid">
           {stats.map((s, i) => (
-            <div key={i} className="stats-card">
-              <div className="stats-value">{s.value}</div>
+            <motion.div
+              key={i}
+              className="stats-card"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="stats-value">
+                <CountUp end={s.value} duration={2} />
+                {s.suffix}
+              </div>
               <div className="stats-label">{s.label}</div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* Badges */}
-        <div className="trust-badges">
+        {/* BADGES */}
+        <motion.div
+          className="trust-badges"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           {trustBadges.map((b, i) => (
-            <span key={i} className="badge">
+            <motion.span
+              key={i}
+              className="badge"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               {b}
-            </span>
+            </motion.span>
           ))}
-        </div>
+        </motion.div>
 
       </div>
     </section>

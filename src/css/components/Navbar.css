@@ -1,0 +1,144 @@
+/* Navbar.css */
+
+.navbar-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease, border-bottom 0.4s ease;
+}
+
+.navbar-nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.navbar-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.navbar-logo-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #C9943A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #1A1208;
+}
+
+.navbar-brand {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+  transition: color 0.4s;
+}
+
+/* Desktop links */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.navbar-link {
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+/* Auth */
+.navbar-auth {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-login {
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  text-decoration: none;
+  padding: 8px 16px;
+  transition: color 0.2s;
+}
+
+.navbar-button {
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1A1208;
+  background: #E8C878;
+  padding: 9px 22px;
+  border-radius: 2px;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(201,148,58,0.3);
+}
+
+/* Mobile button */
+.navbar-mobile-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: none;
+}
+
+/* Mobile menu */
+.navbar-mobile-menu {
+  background: hsl(var(--background) / 0.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.navbar-mobile-content {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navbar-mobile-link {
+  display: block;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.navbar-mobile-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+
+  .navbar-mobile-btn {
+    display: flex !important;
+  }
+}

@@ -17,15 +17,17 @@ export default function MissionSection() {
           </h2>
 
           <p className="mission-desc">
-            Brainbox AI was built for a single purpose: to make every moment of learning
-            count. Not with flashy gimmicks — but with tools that genuinely understand
-            where students struggle, and meet them exactly there.
+            Brainbox AI was built for a single purpose: to make every
+            moment of learning count. Not with flashy gimmicks — but
+            with tools that genuinely understand where students struggle,
+            and meet them exactly there.
           </p>
 
           <div className="mission-buttons">
             <Link href="/register" className="btn-primary">
               Start Learning →
             </Link>
+
             <Link href="/about" className="btn-outline">
               Our Story
             </Link>
@@ -43,6 +45,7 @@ export default function MissionSection() {
 
           <div className="mission-badge">
             <div className="mission-percent">97%</div>
+
             <div className="mission-badge-text">
               of students reported improved grades within 4 weeks
             </div>

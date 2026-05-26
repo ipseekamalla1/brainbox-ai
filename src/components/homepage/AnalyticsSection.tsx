@@ -20,7 +20,7 @@ export default function AnalyticsSection() {
 
       {/* background */}
       <img
-        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&q=80"
+        src="https://images.pexels.com/photos/186461/pexels-photo-186461.jpeg?_gl=1*1aecexl*_ga*NTcwMzU1MTg2LjE3NzkyMDM0MzE.*_ga_8JE65Q40S6*czE3Nzk0NzU2NTckbzIkZzEkdDE3Nzk0NzYwNzEkajUzJGwwJGgw"
         alt=""
         className="analytics-bg-img"
         aria-hidden="true"
